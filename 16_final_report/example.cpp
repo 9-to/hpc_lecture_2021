@@ -5,6 +5,10 @@
 #include <chrono>
 using namespace std;
 
+//qrsh -g tga-hpc-lecture -l q_node=1 -l h_rt=1:00:00
+//module load gcc intel-mpi
+//mpicxx example.cpp -fopenmp -fopt-info-vec-optimized -march=native -O3
+
 int main(int argc, char** argv) {
   int size, rank;
   MPI_Init(&argc, &argv);
@@ -38,6 +42,7 @@ int main(int argc, char** argv) {
   for(int irank=0; irank<size; irank++) {
     auto tic = chrono::steady_clock::now();
     offset = N/size*((rank+irank) % size);
+#pragma omp parallel for collapse(3)
     for (int i=0; i<N/size; i++)
       for (int j=0; j<N/size; j++)
         for (int k=0; k<N; k++)
